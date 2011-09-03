@@ -76,9 +76,10 @@ module PdfHelper
     def prerender_header_and_footer(options)
       [:header, :footer].each do |hf|
         if options[hf] && options[hf][:html] && options[hf][:html][:template]
+          hf_layout = options[hf][:html].has_key?(:layout) ? options[hf][:html][:layout] : options[:layout]
           @hf_tempfiles = [] if ! defined?(@hf_tempfiles)
           @hf_tempfiles.push( tf=WickedPdfTempfile.new("wicked_#{hf}_pdf.html") )
-          tf.write render_to_string(:template => options[hf][:html][:template], :layout => options[:layout], :locals => options[hf][:html][:locals])
+          tf.write render_to_string(:template => options[hf][:html][:template], :layout => hf_layout, :locals => options[hf][:html][:locals])
           tf.flush
           options[hf][:html].delete(:template)
           options[hf][:html][:url] = "file://#{tf.path}"
